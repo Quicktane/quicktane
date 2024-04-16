@@ -8,7 +8,9 @@
         "php": "^8.2",
         "laravel/framework": "^11.0",
         "laravel/octane": "^2.3",
-        "laravel/tinker": "^2.9"
+        "laravel/tinker": "^2.9",
+        "quicktane/core": "dev-main",
+        "quicktane/api": "dev-main"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -63,6 +65,22 @@
             "php-http/discovery": true
         }
     },
-    "minimum-stability": "stable",
+    "repositories": [
+        {
+            "type": "path",
+            "url": "packages/core",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "packages/api",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
+    "minimum-stability": "dev",
     "prefer-stable": true
 }
