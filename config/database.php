@@ -18,6 +18,8 @@ return [
 
     'default' => env('DB_CONNECTION', 'sqlite'),
 
+    'table_prefix' => 'qt_',
+
     /*
     |--------------------------------------------------------------------------
     | Database Connections
@@ -28,6 +30,8 @@ return [
     | is supported by Laravel. You're free to add / remove connections.
     |
     */
+
+    'connection' => 'mysql',
 
     'connections' => [
 
@@ -70,7 +74,7 @@ return [
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => env('DB_CHARSET', 'utf8mb4'),
             'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
-            'prefix' => '',
+            'prefix' => 'qt_',
             'prefix_indexes' => true,
             'strict' => true,
             'engine' => null,
@@ -144,7 +148,7 @@ return [
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
-            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_database_'),
+            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_') . '_database_'),
         ],
 
         'default' => [
