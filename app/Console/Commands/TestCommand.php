@@ -3,6 +3,10 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Quicktane\Core\Dto\ProductDto;
+use Quicktane\Core\Enums\ProductType;
+use Quicktane\Core\Services\AttributeGroupService;
+use Quicktane\Core\Services\AttributesService;
 use Quicktane\Core\Services\ProductService;
 
 class TestCommand extends Command
@@ -24,22 +28,53 @@ class TestCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle(ProductService $productService)
+    public function handle(ProductService $productService, AttributesService $attributesService, AttributeGroupService $attributeGroupService)
     {
-        $product = $productService->create([
-            'attribute_groups' => [1, 2],
-            'type'             => 'simple',
-            'sku'              => 'qwe',
-            'quantity'         => 3,
-            'status'           => 'active',
-            'attributes'       => [
+//        $attribute = $attributesService->create(AttributeDto::fromArray([
+//            'name' => 'Name',
+//            'slug' => 'name',
+//            'type' => AttributeType::STRING,
+//        ]));
+//
+//        $attribute1 = $attributesService->create(AttributeDto::fromArray([
+//            'name' => 'Description',
+//            'slug' => 'description',
+//            'type' => AttributeType::STRING,
+//        ]));
+//
+//        $attributeGroup = $attributeGroupService->create(AttributeGroupDto::fromArray([
+//            'name' => 'Default',
+//            'slug' => 'default',
+//            'attributes' => [$attribute->id, $attribute1->id]
+//        ]));
+
+        $product = $productService->create(ProductDto::fromArray([
+            'attribute_group' => 1,
+            'type'            => ProductType::SIMPLE,
+            'sku'             => 'qwe',
+            'quantity'        => 3,
+            'attributes'      => [
                 'name'        => 'My new product',
                 'description' => 'My new product description',
                 'width'       => 1,
                 'height'      => 1,
                 'length'      => 1,
             ],
-        ]);
+        ]));
+
+        $product = $productService->update($product, ProductDto::fromArray([
+            'attribute_group' => 1,
+            'type'            => ProductType::SIMPLE,
+            'sku'             => 'qweqqq',
+            'quantity'        => 10,
+            'attributes'      => [
+                'name'        => 'My updated product',
+                'description' => 'My new product description',
+                'width'       => 4,
+                'height'      => 2,
+                'length'      => 3,
+            ],
+        ]));
 
 //        $attribute = new Attribute([
 //            'name' => 'Name',
