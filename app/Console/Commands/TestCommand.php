@@ -3,9 +3,6 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Quicktane\Core\Dto\ProductDto;
-use Quicktane\Core\Enums\ProductType;
-use Quicktane\Core\Models\Product;
 use Quicktane\Core\Services\AttributeGroupService;
 use Quicktane\Core\Services\AttributesService;
 use Quicktane\Core\Services\ProductService;
@@ -63,18 +60,18 @@ class TestCommand extends Command
 //            ],
 //        ]));
 
-        $product = $productService->update(Product::query()->find(1), ProductDto::fromArray([
-            'attribute_group' => 1,
-            'type'            => ProductType::SIMPLE,
-            'sku'             => 'qweqqq',
-            'quantity'        => 10,
-            'attributes'      => [
-                'name'        => 'My nwqeqweqwe',
-                'description' => 'My new product description',
-                'width'       => 4,
-                'height'      => 2,
-                'length'      => 3,
-            ],
-        ]));
+//        $product = $productService->update(Product::query()->find(1), ProductDto::fromArray([
+//            'attribute_group' => 1,
+//            'type'            => ProductType::SIMPLE,
+//            'sku'             => 'qweqqq',
+//            'quantity'        => 10,
+//            'attributes'      => [
+//                'name'        => 'My nwqeqweqwe',
+//                'description' => 'My new product description',
+//                'width'       => 4,
+//                'height'      => 2,
+//                'length'      => 3,
+//            ],
+//        ]));
     }
 }
