@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Quicktane\Core\Dto\CustomerGroupDto;
+use Quicktane\Core\Models\Customer;
 use Quicktane\Core\Models\CustomerGroup;
 use Quicktane\Core\Services\CustomerGroupService;
 use Quicktane\Core\Services\CustomerService;
@@ -33,9 +33,9 @@ class TestCustomerCommand extends Command
 //            'name' => 'My new Customer Group'
 //        ]));
 
-        $customerGroupService->update(CustomerGroup::query()->find(1), CustomerGroupDto::fromArray([
-            'name' => 'My new Customer Group new'
-        ]));
+//        $customerGroupService->update(CustomerGroup::query()->find(1), CustomerGroupDto::fromArray([
+//            'name' => 'My new Customer Group new'
+//        ]));
 
 //        $customerService->create(CustomerDto::fromArray([
 //            'first_name' => 'John',
@@ -43,5 +43,8 @@ class TestCustomerCommand extends Command
 ////            'email' => 'john@doe.com',
 //            'phone' => '0123456789',
 //        ]));
+
+        $customerGroupService->attachCustomerToGroup(CustomerGroup::query()->find(1), Customer::query()->find(1));
+        $customerGroupService->detachCustomerToGroup(CustomerGroup::query()->find(1), Customer::query()->find(1));
     }
 }
