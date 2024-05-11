@@ -3,8 +3,6 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Quicktane\Core\Models\Customer;
-use Quicktane\Core\Models\CustomerGroup;
 use Quicktane\Core\Services\CustomerGroupService;
 use Quicktane\Core\Services\CustomerService;
 
@@ -44,7 +42,7 @@ class TestCustomerCommand extends Command
 //            'phone' => '0123456789',
 //        ]));
 
-        $customerGroupService->attachCustomerToGroup(CustomerGroup::query()->find(1), Customer::query()->find(1));
-        $customerGroupService->detachCustomerToGroup(CustomerGroup::query()->find(1), Customer::query()->find(1));
+//        $customerGroupService->attachCustomerToGroup(CustomerGroup::query()->find(1), Customer::query()->find(1));
+//        $customerGroupService->detachCustomerToGroup(CustomerGroup::query()->find(1), Customer::query()->find(1));
     }
 }
