@@ -3,6 +3,9 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Quicktane\Core\Dto\AttributeDto;
+use Quicktane\Core\Dto\AttributeGroupDto;
+use Quicktane\Core\Enums\AttributeType;
 use Quicktane\Core\Services\AttributeGroupService;
 use Quicktane\Core\Services\AttributesService;
 use Quicktane\Core\Services\ProductService;
@@ -28,23 +31,23 @@ class TestCommand extends Command
      */
     public function handle(ProductService $productService, AttributesService $attributesService, AttributeGroupService $attributeGroupService)
     {
-//        $attribute = $attributesService->create(AttributeDto::fromArray([
-//            'name' => 'Name',
-//            'slug' => 'name',
-//            'type' => AttributeType::STRING,
-//        ]));
-//
-//        $attribute1 = $attributesService->create(AttributeDto::fromArray([
-//            'name' => 'Description',
-//            'slug' => 'description',
-//            'type' => AttributeType::STRING,
-//        ]));
-//
-//        $attributeGroup = $attributeGroupService->create(AttributeGroupDto::fromArray([
-//            'name' => 'Default',
-//            'slug' => 'default',
-//            'attributes' => [$attribute->id, $attribute1->id]
-//        ]));
+        $attribute = $attributesService->create(AttributeDto::fromArray([
+            'name' => 'Name',
+            'slug' => 'name',
+            'type' => AttributeType::STRING,
+        ]));
+
+        $attribute1 = $attributesService->create(AttributeDto::fromArray([
+            'name' => 'Description',
+            'slug' => 'description',
+            'type' => AttributeType::STRING,
+        ]));
+
+        $attributeGroup = $attributeGroupService->create(AttributeGroupDto::fromArray([
+            'name' => 'Default',
+            'slug' => 'default',
+            'attributes' => [$attribute->id, $attribute1->id]
+        ]));
 
 //        $product = $productService->create(ProductDto::fromArray([
 //            'attribute_group' => 1,
