@@ -3,13 +3,13 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Quicktane\Core\Dto\ProductDto;
-use Quicktane\Core\Enums\ProductType;
+use Quicktane\Core\Cart\Services\CartService;
+use Quicktane\Core\Customer\Models\Customer;
+use Quicktane\Core\Customer\Services\CustomerService;
 use Quicktane\Core\Models\Currency;
-use Quicktane\Core\Models\Customer;
-use Quicktane\Core\Services\CartService;
-use Quicktane\Core\Services\CustomerService;
-use Quicktane\Core\Services\ProductService;
+use Quicktane\Core\Product\Dto\ProductDto;
+use Quicktane\Core\Product\Enums\ProductType;
+use Quicktane\Core\Product\Services\ProductService;
 
 class TestCartCommand extends Command
 {

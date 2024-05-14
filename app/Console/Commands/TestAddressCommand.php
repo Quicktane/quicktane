@@ -3,11 +3,11 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Quicktane\Core\Dto\AddressDto;
-use Quicktane\Core\Dto\CustomerDto;
-use Quicktane\Core\Enums\AddressType;
-use Quicktane\Core\Services\AddressService;
-use Quicktane\Core\Services\CustomerService;
+use Quicktane\Core\Customer\Dto\AddressDto;
+use Quicktane\Core\Customer\Dto\CustomerDto;
+use Quicktane\Core\Customer\Enums\AddressType;
+use Quicktane\Core\Customer\Services\AddressService;
+use Quicktane\Core\Customer\Services\CustomerService;
 
 class TestAddressCommand extends Command
 {

@@ -3,12 +3,12 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Quicktane\Core\Dto\AttributeDto;
-use Quicktane\Core\Dto\AttributeGroupDto;
-use Quicktane\Core\Enums\AttributeType;
-use Quicktane\Core\Services\AttributeGroupService;
-use Quicktane\Core\Services\AttributesService;
-use Quicktane\Core\Services\ProductService;
+use Quicktane\Core\Product\Dto\AttributeDto;
+use Quicktane\Core\Product\Dto\AttributeGroupDto;
+use Quicktane\Core\Product\Enums\AttributeType;
+use Quicktane\Core\Product\Services\AttributeGroupService;
+use Quicktane\Core\Product\Services\AttributesService;
+use Quicktane\Core\Product\Services\ProductService;
 
 class TestCommand extends Command
 {

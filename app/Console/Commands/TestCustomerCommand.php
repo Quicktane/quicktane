@@ -3,8 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Quicktane\Core\Services\CustomerGroupService;
-use Quicktane\Core\Services\CustomerService;
+use Quicktane\Core\Customer\Services\CustomerGroupService;
+use Quicktane\Core\Customer\Services\CustomerService;
 
 class TestCustomerCommand extends Command
 {
