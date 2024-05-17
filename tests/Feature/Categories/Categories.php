@@ -22,12 +22,12 @@ class Categories extends TestCase
     }
 
     /**
-     * @see CategoryService::listTree()
+     * @see CategoryService::tree()
      */
     public function testListCategoryTree()
     {
         //TODO compare structure
-        $this->assertTrue((bool)$this->categoryService->listTree());
+        $this->assertTrue((bool)$this->categoryService->tree());
     }
 
     /**

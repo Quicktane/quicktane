@@ -25,7 +25,7 @@ class CategoriesProduct extends TestCase
 
     public function testAttachCategories()
     {
-        $categories = [
+        $categoriesIds = [
             Category::factory()->create()->id,
             Category::factory()->create()->id,
             Category::factory()->create()->id,
@@ -33,10 +33,7 @@ class CategoriesProduct extends TestCase
 
         $product = Product::factory()->create();
 
-        $products = ProductsIdsDto::fromArray(['products' => [$product->id]]);
-        $categories = CategoriesIdsDto::fromArray(['categories' => $categories]);
-
-        $this->categoryService->attach($products, $categories);
+        $this->categoryService->attach([$product->id], $categoriesIds);
 
         $this->assertTrue($product->categories()->count() === 3);
     }
