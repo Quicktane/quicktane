@@ -24,7 +24,7 @@ class ConfigTest extends TestCase
 
     public function testList(): void
     {
-        $configs = $this->configService->list();
+        $configs = $this->configService->all();
 
         $this->assertTrue($configs->count() == Config::query()->count());
     }
@@ -50,6 +50,7 @@ class ConfigTest extends TestCase
 
         $this->configService->set($configDto);
         $config = $this->configService->get(ConfigKey::GRADE);
+        $config = $this->configService->getOrFail(ConfigKey::GRADE);
 
         $this->assertTrue('middle' === $config);
     }
