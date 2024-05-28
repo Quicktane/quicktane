@@ -7,7 +7,7 @@ use Quicktane\Core\Product\Dto\ProductDto;
 use Quicktane\Core\Product\Enums\ProductType;
 use Quicktane\Core\Product\Models\Price;
 use Quicktane\Core\Product\Services\AttributeGroupService;
-use Quicktane\Core\Product\Services\AttributesService;
+use Quicktane\Core\Product\Services\AttributeService;
 use Quicktane\Core\Product\Services\ProductService;
 
 class TestCommand extends Command
@@ -31,7 +31,7 @@ class TestCommand extends Command
      */
     public function handle(
         ProductService $productService,
-        AttributesService $attributesService,
+        AttributeService $attributesService,
         AttributeGroupService $attributeGroupService
     ) {
 //        $attribute = $attributesService->create(AttributeDto::fromArray([
