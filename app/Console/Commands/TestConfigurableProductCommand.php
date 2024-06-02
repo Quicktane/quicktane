@@ -3,19 +3,19 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Quicktane\Core\Product\Dto\ProductDto;
+use Quicktane\Core\Product\Dto\ConfigurableProductDto;
 use Quicktane\Core\Product\Services\AttributeGroupService;
 use Quicktane\Core\Product\Services\AttributeService;
 use Quicktane\Core\Product\Services\ProductService;
 
-class TestCommand extends Command
+class TestConfigurableProductCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'test:test';
+    protected $signature = 'test:conf-product';
 
     /**
      * The console command description.
@@ -68,40 +68,22 @@ class TestCommand extends Command
 //            'enabled' => true,
 //        ]);
 
-        $product = $productService->createSimpleProduct(ProductDto::fromArray([
-            'attribute_group_id' => 1,
-            'sku'                => 'qwe',
-            'quantity'           => 3,
-            'attributes'         => [
-                'name'        => 'My new product',
-                'description' => 'My new product description',
-                'width'       => 1,
-                'height'      => 1,
-                'length'      => 1,
+        $product = $productService->creteConfigurableProduct(ConfigurableProductDto::fromArray([
+            'product'              => [
+                'attribute_group_id' => 1,
+                'sku'                => 'qwe',
+                'quantity'           => 3,
+                'attributes'         => [
+                    'name'        => 'My new product',
+                    'description' => 'My new product description',
+                    'width'       => 1,
+                    'height'      => 1,
+                    'length'      => 1,
+                ],
+            ],
+            'configurable_options' => [
+                'attribute_options' => [1, 2],
             ],
         ]));
-
-//        $price = Price::query()->newModelInstance();
-//        $price->product()->associate($product);
-//        $price->amount = money(100, 'EUR');
-//        $price->save();
-//
-//        $prices = $product->prices;
-
-//        dd($prices);
-
-//        $product = $productService->update(Product::query()->find(1), ProductDto::fromArray([
-//            'attribute_group' => 1,
-//            'type'            => ProductType::SIMPLE,
-//            'sku'             => 'qweqqq',
-//            'quantity'        => 10,
-//            'attributes'      => [
-//                'name'        => 'My nwqeqweqwe',
-//                'description' => 'My new product description',
-//                'width'       => 4,
-//                'height'      => 2,
-//                'length'      => 3,
-//            ],
-//        ]));
     }
 }

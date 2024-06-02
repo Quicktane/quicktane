@@ -30,11 +30,13 @@ class TestAttributeCommand extends Command
     public function handle(
         AttributeManager $attributeManager,
     ) {
-        $attribute = $attributeManager->create(CreateAttributeDto::fromArray([
-            'name' => 'Color',
-            'slug' => 'color',
-            'type' => AttributeType::SELECT,
-        ]),
+        $attribute = $attributeManager->create(
+            CreateAttributeDto::fromArray([
+                'name' => 'Color',
+                'slug' => 'color',
+                'type' => AttributeType::SELECT,
+            ]),
+            //todo create collection for DTOs and create all method "from" in dto (ex.: fromArray, fromCollection, fromRequest)
             collect([
                 AttributeOptionDto::fromArray([
                     'name' => 'Black',
@@ -48,6 +50,7 @@ class TestAttributeCommand extends Command
                     'name' => 'Green',
                     'slug' => 'green',
                 ]),
-            ]));
+            ])
+        );
     }
 }
