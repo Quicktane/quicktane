@@ -3,31 +3,30 @@
 namespace Tests\Feature\Config;
 
 use Illuminate\Foundation\Testing\WithFaker;
-use Quicktane\Core\Config\Decorators\ConfigDecorator;
-use Quicktane\Core\Config\Dto\ConfigDto;
+use Quicktane\Core\Config\Decorators\ConfigService;
 use Quicktane\Core\Config\Enums\ConfigKey;
 use Quicktane\Core\Config\Models\Config;
-use Quicktane\Core\Config\Services\ConfigService;
+use Quicktane\Core\Config\Services\ConfigRepository;
 use Tests\TestCase;
 
 class ConfigTest extends TestCase
 {
     use WithFaker;
 
+    protected ?ConfigRepository $configRepository = null;
     protected ?ConfigService $configService = null;
-    protected ?ConfigDecorator $configDecorator = null;
 
     public function __construct(string $name)
     {
         parent::__construct($name);
 
+        $this->configRepository = resolve(ConfigRepository::class);
         $this->configService = resolve(ConfigService::class);
-        $this->configDecorator = resolve(ConfigDecorator::class);
     }
 
     public function testList(): void
     {
-        $configs = resolve(ConfigDecorator::class)->all();
+        $configs = $this->configService->all();
 
         $this->assertTrue($configs->count() == Config::query()->count());
     }
@@ -36,7 +35,7 @@ class ConfigTest extends TestCase
     {
         $this->createConfigValue();
 
-        $config = $this->configDecorator->find(ConfigKey::GRADE);
+        $config = $this->configService->find(ConfigKey::GRADE);
 
         $this->assertTrue($config == Config::query()->where('key', ConfigKey::GRADE->value)->first()->value);
     }
@@ -45,40 +44,40 @@ class ConfigTest extends TestCase
     {
         $this->createConfigValue();
 
-        $config = $this->configDecorator->findOrFail(ConfigKey::GRADE);
+        $config = $this->configService->findOrFail(ConfigKey::GRADE);
 
         $this->assertTrue($config == Config::query()->where('key', ConfigKey::GRADE->value)->first()->value);
     }
 
     public function testPut(): void
     {
-        $configDto = ConfigDto::fromArray([
+        $config = [
             'key' => ConfigKey::GRADE,
             'value' => 'middle'
-        ]);
+        ];
 
-        $this->createConfigValue($configDto);
+        $this->createConfigValue($config);
 
-        $this->assertTrue($this->configDecorator->find(ConfigKey::GRADE) == $configDto->value);
+        $this->assertTrue($this->configService->find(ConfigKey::GRADE) == $config['value']);
     }
 
     public function testDelete(): void
     {
         $this->createConfigValue();
-        $this->configDecorator->delete(ConfigKey::GRADE);
+        $this->configService->delete(ConfigKey::GRADE);
 
         $this->assertTrue(Config::query()->where('key', ConfigKey::GRADE->name)->count() == 0);
     }
 
-    protected function createConfigValue(?ConfigDto $configDto = null): void
+    protected function createConfigValue(?array $config = null): void
     {
-        if (is_null($configDto)) {
-            $configDto = ConfigDto::fromArray([
+        if (is_null($config)) {
+            $config = [
                 'key' => ConfigKey::GRADE,
                 'value' => 'middle'
-            ]);
+            ];
         }
 
-        $this->configService->set($configDto);
+        $this->configRepository->set($config);
     }
 }
