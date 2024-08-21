@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'global_config' => 'true',
+    'global_settings' => 'true',
 
     'cache_driver' => 'database'
 ];
