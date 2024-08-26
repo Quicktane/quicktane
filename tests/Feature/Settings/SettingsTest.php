@@ -35,7 +35,7 @@ class SettingsTest extends TestCase
     {
         $this->createSettingsValue();
 
-        $settings = $this->settingsService->find(SettingsKey::GRADE);
+        $settings = $this->settingsService->find(SettingsKey::GRADE->value);
 
         $this->assertTrue($settings == Settings::query()->where('key', SettingsKey::GRADE->value)->first()->value);
     }
@@ -44,7 +44,7 @@ class SettingsTest extends TestCase
     {
         $this->createSettingsValue();
 
-        $settings = $this->settingsService->findOrFail(SettingsKey::GRADE);
+        $settings = $this->settingsService->findOrFail(SettingsKey::GRADE->value);
 
         $this->assertTrue($settings == Settings::query()->where('key', SettingsKey::GRADE->value)->first()->value);
     }
@@ -58,13 +58,13 @@ class SettingsTest extends TestCase
 
         $this->createSettingsValue($settings);
 
-        $this->assertTrue($this->settingsService->find(SettingsKey::GRADE) == $settings['value']);
+        $this->assertTrue($this->settingsService->find(SettingsKey::GRADE->value) == $settings['value']);
     }
 
     public function testDelete(): void
     {
         $this->createSettingsValue();
-        $this->settingsService->delete(SettingsKey::GRADE);
+        $this->settingsService->delete(SettingsKey::GRADE->value);
 
         $this->assertTrue(Settings::query()->where('key', SettingsKey::GRADE->name)->count() == 0);
     }
@@ -73,12 +73,12 @@ class SettingsTest extends TestCase
     {
         if (is_null($settings)) {
             $settings = [
-                'key' => SettingsKey::GRADE,
+                'key' => SettingsKey::GRADE->value,
                 'value' => 'middle'
             ];
         }
 
-        if (!$this->settingsRepository->find(SettingsKey::GRADE)) {
+        if (!$this->settingsRepository->find(SettingsKey::GRADE->value)) {
             $this->settingsRepository->set($settings);
         }
     }
