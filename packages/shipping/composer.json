@@ -1,0 +1,24 @@
+{
+    "name": "quicktane/module-shipping",
+    "description": "Shipping abstraction, rates, tracking",
+    "type": "library",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.3",
+        "quicktane/core": "@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Quicktane\\Shipping\\": "src/",
+            "Quicktane\\Shipping\\Database\\": "database/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Quicktane\\Shipping\\ShippingServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable"
+}

@@ -1,0 +1,23 @@
+{
+    "name": "quicktane/module-media",
+    "description": "File upload, storage, image processing",
+    "type": "library",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.3",
+        "quicktane/core": "@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Quicktane\\Media\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Quicktane\\Media\\MediaServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable"
+}

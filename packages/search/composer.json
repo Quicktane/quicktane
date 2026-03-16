@@ -1,0 +1,26 @@
+{
+    "name": "quicktane/module-search",
+    "description": "Search indexing, facets, autocomplete",
+    "type": "library",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.3",
+        "quicktane/core": "@dev",
+        "laravel/scout": "^11.0",
+        "meilisearch/meilisearch-php": "^1.16"
+    },
+    "autoload": {
+        "psr-4": {
+            "Quicktane\\Search\\": "src/",
+            "Quicktane\\Search\\Database\\": "database/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Quicktane\\Search\\SearchServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable"
+}

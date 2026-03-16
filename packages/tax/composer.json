@@ -1,0 +1,24 @@
+{
+    "name": "quicktane/module-tax",
+    "description": "Tax rules, rates, zones, tax classes",
+    "type": "library",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.3",
+        "quicktane/core": "@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Quicktane\\Tax\\": "src/",
+            "Quicktane\\Tax\\Database\\": "database/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Quicktane\\Tax\\TaxServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable"
+}

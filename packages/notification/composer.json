@@ -1,0 +1,24 @@
+{
+    "name": "quicktane/module-notification",
+    "description": "Centralized emails, templates, notification log",
+    "type": "library",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.3",
+        "quicktane/core": "@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Quicktane\\Notification\\": "src/",
+            "Quicktane\\Notification\\Database\\": "database/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Quicktane\\Notification\\NotificationServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable"
+}

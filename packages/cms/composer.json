@@ -1,0 +1,24 @@
+{
+    "name": "quicktane/module-cms",
+    "description": "CMS pages, blocks, URL rewrites",
+    "type": "library",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.3",
+        "quicktane/core": "@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Quicktane\\CMS\\": "src/",
+            "Quicktane\\CMS\\Database\\": "database/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Quicktane\\CMS\\CMSServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "stable"
+}
