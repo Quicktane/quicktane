@@ -1,0 +1,6 @@
+vendor/
+node_modules/
+admin/node_modules/
+admin/dist/
+.git/
+storage/logs/*
