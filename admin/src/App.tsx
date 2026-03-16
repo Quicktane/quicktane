@@ -92,7 +92,7 @@ import { NotificationLogsShow } from "@/pages/Notifications/Logs/Show";
 
 export function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/admin">
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<Login />} />

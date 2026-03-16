@@ -2,9 +2,10 @@ import axios from "axios";
 
 const AUTH_TOKEN_KEY = "quicktane_customer_token";
 const CART_TOKEN_KEY = "quicktane_cart_token";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "";
 
 const api = axios.create({
-  baseURL: "/api/v1",
+  baseURL: `${API_BASE_URL}/api/v1`,
   headers: {
     Accept: "application/json",
     "Content-Type": "application/json",

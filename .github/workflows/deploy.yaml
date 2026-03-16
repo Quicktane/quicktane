@@ -1,0 +1,265 @@
+name: Deploy to Kubernetes
+
+on:
+  release:
+    types: [published]
+
+env:
+  REGISTRY: ghcr.io
+  REGISTRY_PATH: ghcr.io/quicktane/quicktane
+  API_URL: https://api.demo.quicktane.com
+  NAMESPACE: quicktane
+
+jobs:
+  # ----------------------------------------------------------------
+  # Build & push the PHP base image (only layers change when
+  # php-base/Dockerfile is modified — otherwise Docker cache hits)
+  # ----------------------------------------------------------------
+  build-php-base:
+    name: Build PHP Base Image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push PHP base image
+        uses: docker/build-push-action@v6
+        with:
+          context: .docker/images/php-base
+          file: .docker/images/php-base/Dockerfile
+          push: true
+          tags: |
+            ${{ env.REGISTRY_PATH }}/php-base:latest
+          cache-from: type=gha,scope=php-base
+          cache-to: type=gha,mode=max,scope=php-base
+
+  # ----------------------------------------------------------------
+  # Build & push application images (API depends on base, frontends
+  # are independent and run in parallel with API)
+  # ----------------------------------------------------------------
+  build-api:
+    name: Build API Image
+    runs-on: ubuntu-latest
+    needs: [build-php-base]
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push API image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: .docker/images/api/Dockerfile
+          push: true
+          build-args: |
+            PHP_BASE_IMAGE=${{ env.REGISTRY_PATH }}/php-base:latest
+          tags: |
+            ${{ env.REGISTRY_PATH }}/api:${{ github.event.release.tag_name }}
+            ${{ env.REGISTRY_PATH }}/api:latest
+          cache-from: type=gha,scope=api
+          cache-to: type=gha,mode=max,scope=api
+
+  build-storefront:
+    name: Build Storefront Image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push Storefront image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: .docker/images/storefront/Dockerfile
+          push: true
+          build-args: |
+            VITE_API_URL=${{ env.API_URL }}
+          tags: |
+            ${{ env.REGISTRY_PATH }}/storefront:${{ github.event.release.tag_name }}
+            ${{ env.REGISTRY_PATH }}/storefront:latest
+          cache-from: type=gha,scope=storefront
+          cache-to: type=gha,mode=max,scope=storefront
+
+  build-admin:
+    name: Build Admin Image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push Admin image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: .docker/images/admin/Dockerfile
+          push: true
+          build-args: |
+            VITE_API_URL=${{ env.API_URL }}
+          tags: |
+            ${{ env.REGISTRY_PATH }}/admin:${{ github.event.release.tag_name }}
+            ${{ env.REGISTRY_PATH }}/admin:latest
+          cache-from: type=gha,scope=admin
+          cache-to: type=gha,mode=max,scope=admin
+
+  # ----------------------------------------------------------------
+  # Deploy to Kubernetes after all images are built
+  # ----------------------------------------------------------------
+  deploy:
+    name: Deploy to Kubernetes
+    runs-on: ubuntu-latest
+    needs: [build-api, build-storefront, build-admin]
+    environment: DEMO
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
+
+      - name: Apply Kubernetes manifests
+        run: kubectl apply -k .kubernetes/production
+
+      - name: Wait for infrastructure
+        run: |
+          echo "Waiting for MariaDB..."
+          kubectl -n ${{ env.NAMESPACE }} wait --for=condition=ready pod \
+            -l app.kubernetes.io/name=mariadb --timeout=180s || true
+
+          echo "Waiting for Redis..."
+          kubectl -n ${{ env.NAMESPACE }} wait --for=condition=ready pod \
+            -l app.kubernetes.io/name=redis --timeout=60s || true
+
+          echo "Waiting for Meilisearch..."
+          kubectl -n ${{ env.NAMESPACE }} wait --for=condition=ready pod \
+            -l app.kubernetes.io/name=meilisearch --timeout=60s || true
+
+      - name: Run migrations and seeders
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+
+          # Delete previous job if exists
+          kubectl -n ${{ env.NAMESPACE }} delete job quicktane-migrate-seed --ignore-not-found
+
+          # Apply job with correct image tag
+          sed "s|ghcr.io/quicktane/quicktane/api:latest|${{ env.REGISTRY_PATH }}/api:$TAG|g" \
+            .kubernetes/production/jobs/migrate-seed.yaml | kubectl apply -f -
+
+          echo "Waiting for migrate-seed job to complete..."
+          kubectl -n ${{ env.NAMESPACE }} wait --for=condition=complete \
+            job/quicktane-migrate-seed --timeout=300s
+
+          echo "=== Migration & Seed Logs ==="
+          kubectl -n ${{ env.NAMESPACE }} logs job/quicktane-migrate-seed
+
+      - name: Update deployment images
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+
+          kubectl -n ${{ env.NAMESPACE }} set image deployment/api \
+            api=${{ env.REGISTRY_PATH }}/api:$TAG
+
+          kubectl -n ${{ env.NAMESPACE }} set image deployment/queue-worker \
+            queue-worker=${{ env.REGISTRY_PATH }}/api:$TAG
+
+          kubectl -n ${{ env.NAMESPACE }} set image deployment/storefront \
+            storefront=${{ env.REGISTRY_PATH }}/storefront:$TAG
+
+          kubectl -n ${{ env.NAMESPACE }} set image deployment/admin \
+            admin=${{ env.REGISTRY_PATH }}/admin:$TAG
+
+      - name: Wait for rollouts
+        run: |
+          echo "Rolling out API..."
+          kubectl -n ${{ env.NAMESPACE }} rollout status deployment/api --timeout=120s
+
+          echo "Rolling out Queue Worker..."
+          kubectl -n ${{ env.NAMESPACE }} rollout status deployment/queue-worker --timeout=60s
+
+          echo "Rolling out Storefront..."
+          kubectl -n ${{ env.NAMESPACE }} rollout status deployment/storefront --timeout=60s
+
+          echo "Rolling out Admin..."
+          kubectl -n ${{ env.NAMESPACE }} rollout status deployment/admin --timeout=60s
+
+      - name: Verify deployment
+        run: |
+          echo "=== Pod Status ==="
+          kubectl -n ${{ env.NAMESPACE }} get pods
+
+          echo ""
+          echo "=== Services ==="
+          kubectl -n ${{ env.NAMESPACE }} get svc
+
+          echo ""
+          echo "=== Ingress ==="
+          kubectl -n ${{ env.NAMESPACE }} get ingress
+
+      - name: Deployment summary
+        run: |
+          echo "============================================"
+          echo "  Deployment complete!"
+          echo "  Version: ${{ github.event.release.tag_name }}"
+          echo ""
+          echo "  Storefront: https://demo.quicktane.com"
+          echo "  Admin:      https://demo.quicktane.com/admin"
+          echo "  API:        https://api.demo.quicktane.com"
+          echo "  Health:     https://api.demo.quicktane.com/api/health"
+          echo "============================================"

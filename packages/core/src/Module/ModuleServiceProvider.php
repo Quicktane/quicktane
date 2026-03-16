@@ -95,10 +95,18 @@ abstract class ModuleServiceProvider extends ServiceProvider
 
     protected function loadModuleMigrations(): void
     {
-        $migrationsPath = $this->packagePath().'/database/migrations';
+        $basePath = $this->packagePath();
 
-        if (is_dir($migrationsPath)) {
-            $this->loadMigrationsFrom($migrationsPath);
+        // Support both lowercase (packages) and uppercase (app modules) directory names
+        // to ensure compatibility across case-sensitive filesystems (Linux/K8s).
+        foreach (['database/migrations', 'Database/migrations'] as $path) {
+            $migrationsPath = $basePath.'/'.$path;
+
+            if (is_dir($migrationsPath)) {
+                $this->loadMigrationsFrom($migrationsPath);
+
+                return;
+            }
         }
     }
 

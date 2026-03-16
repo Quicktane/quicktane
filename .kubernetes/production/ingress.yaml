@@ -1,0 +1,50 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: quicktane-ingress
+  namespace: quicktane
+  labels:
+    app.kubernetes.io/part-of: quicktane
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "64m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "120"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "120"
+spec:
+  ingressClassName: nginx
+  rules:
+    # ------------------------------------------------------------------
+    # API: api.demo.quicktane.com → api service (port 8000)
+    # ------------------------------------------------------------------
+    - host: api.demo.quicktane.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: api
+                port:
+                  number: 8000
+
+    # ------------------------------------------------------------------
+    # Frontend: demo.quicktane.com
+    #   /admin  → admin service (port 80)
+    #   /       → storefront service (port 80)
+    # ------------------------------------------------------------------
+    - host: demo.quicktane.com
+      http:
+        paths:
+          - path: /admin
+            pathType: Prefix
+            backend:
+              service:
+                name: admin
+                port:
+                  number: 80
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: storefront
+                port:
+                  number: 80

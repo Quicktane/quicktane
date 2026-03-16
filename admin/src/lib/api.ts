@@ -1,9 +1,10 @@
 import axios from "axios";
 
 const TOKEN_KEY = "quicktane_admin_token";
+const API_BASE_URL = import.meta.env.VITE_API_URL || "";
 
 const api = axios.create({
-  baseURL: "/api/v1",
+  baseURL: `${API_BASE_URL}/api/v1`,
   headers: {
     Accept: "application/json",
     "Content-Type": "application/json",
@@ -26,8 +27,8 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem(TOKEN_KEY);
 
-      if (window.location.pathname !== "/login") {
-        window.location.href = "/login";
+      if (window.location.pathname !== "/admin/login") {
+        window.location.href = "/admin/login";
       }
     }
 
