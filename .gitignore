@@ -30,3 +30,5 @@ Thumbs.db
 **/caddy
 frankenphp
 frankenphp-worker.php
+
+.kubernetes/production/secrets.yaml
